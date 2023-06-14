@@ -5,6 +5,8 @@ from src.logger import logging
 from src.exception import ProdException
 from src.entity.config_entity import DataIngestionConfig
 from src.entity.artifact_entity import DataIngestionArtifact
+from src.constant.s3_bucket import TRAINING_BUCKET,TRAINING_KEY
+from src.configuration.s3_connection import S3Client
 import requests
 
 
@@ -22,20 +24,12 @@ class DataIngestion:
             os.makedirs(zip_download_dir, exist_ok=True)
             data_file_name = "file.zip"
             zip_file_path = os.path.join(zip_download_dir, data_file_name)
-            URL = "https://drive.google.com/u/0/uc?&export=download"
-            id = "1MEgDYJwO_PVVfAbyfjaRHXt7qoiBBHYt"
 
-            logging.info(f"Downloading data from {URL} into file {zip_file_path}")
-            session = requests.Session()
-            response = session.get(URL, params = { 'id' : id }, stream = True)
-            params = { 'id' : id, 'confirm' : 1 }
-            response = session.get(URL, params = params, stream = True)
-            CHUNK_SIZE = 32768
-            with open(zip_file_path, "wb") as f:
-                for chunk in response.iter_content(CHUNK_SIZE):
-                    if chunk: # filter out keep-alive new chunks
-                        f.write(chunk)
-            logging.info(f"Downloaded data from {URL} into file {zip_file_path}")
+            logging.info(f"Downloading data from s3 bucket{TRAINING_BUCKET} into file {zip_file_path}")
+            s3 = S3Client()
+            with open(zip_file_path, 'wb') as f:
+                s3.client.download_fileobj(TRAINING_BUCKET, TRAINING_KEY, f)
+            logging.info(f"Downloaded data from s3 bucket{TRAINING_BUCKET} into file {zip_file_path}")
             return zip_file_path
         
         except Exception as e:

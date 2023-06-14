@@ -1,5 +1,7 @@
 from src.pipeline.training_pipeline import TrainPipeline
-
-
-obj = TrainPipeline()
-obj.run_pipeline()
+from src.logger import logging
+try:
+    obj = TrainPipeline()
+    obj.run_pipeline()
+except Exception as e:
+    logging.exception(e)

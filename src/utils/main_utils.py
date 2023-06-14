@@ -3,7 +3,7 @@ import sys
 import yaml
 import base64
 
-from src.exception import PordException
+from src.exception import ProdException
 from src.logger import logging
 
 
@@ -14,7 +14,7 @@ def read_yaml_file(file_path: str) -> dict:
             return yaml.safe_load(yaml_file)
 
     except Exception as e:
-        raise PordException(e, sys) from e
+        raise ProdException(e, sys) from e
     
 
 def write_yaml_file(file_path: str, content: object, replace: bool = False) -> None:
@@ -30,7 +30,7 @@ def write_yaml_file(file_path: str, content: object, replace: bool = False) -> N
             logging.info("Successfully write_yaml_file")
 
     except Exception as e:
-        raise PordException(e, sys)
+        raise ProdException(e, sys)
     
 
 
